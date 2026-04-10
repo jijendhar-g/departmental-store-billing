@@ -1,0 +1,132 @@
+# Netlify Configuration for Departmental Store Billing Software
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  base = "frontend"
+  publish = "build"
+  command = "npm run build"
+  functions = "../functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+  REACT_APP_API_URL = "/.netlify/functions"
+  CI = "false"
+
+# Development settings
+[context.dev]
+  command = "npm run start"
+
+# Production context
+[context.production]
+  command = "npm run build"
+
+[context.production.environment]
+  NODE_ENV = "production"
+  REACT_APP_ENV = "production"
+
+# Branch deploy contexts
+[context.branch-deploy]
+  command = "npm run build"
+
+[context.deploy-preview]
+  command = "npm run build"
+
+# Netlify Functions configuration
+[functions]
+  directory = "functions"
+  node_bundler = "esbuild"
+  included_files = ["functions/**"]
+
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+# Redirect rules for SPA routing
+[[redirects]]
+  from = "/api/billing/*"
+  to = "/.netlify/functions/api/billing/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/inventory/*"
+  to = "/.netlify/functions/api/inventory/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/customers/*"
+  to = "/.netlify/functions/api/customers/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/sales/*"
+  to = "/.netlify/functions/api/sales/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/*"
+  to = "/.netlify/functions/api/auth/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/departments/*"
+  to = "/.netlify/functions/api/departments/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/payments/*"
+  to = "/.netlify/functions/api/payments/:splat"
+  status = 200
+
+# SPA fallback - all other routes serve the React app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security and performance headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.netlify.app https://*.supabase.co wss://*.supabase.co; frame-src https://checkout.razorpay.com"
+
+# Cache control for static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# No cache for HTML (always fresh)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# API functions - no cache
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"

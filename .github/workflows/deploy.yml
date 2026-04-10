@@ -1,0 +1,214 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================
+  # Test Job
+  # ============================================================
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test -- --watchAll=false --passWithNoTests
+        env:
+          CI: true
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Verify function files
+        run: |
+          echo "Checking Netlify function files..."
+          test -f functions/database.js && echo "✅ database.js found"
+          test -f functions/middleware/auth.js && echo "✅ middleware/auth.js found"
+          test -f functions/middleware/errorHandler.js && echo "✅ middleware/errorHandler.js found"
+          test -f functions/api/auth.js && echo "✅ api/auth.js found"
+          test -f functions/api/billing.js && echo "✅ api/billing.js found"
+          test -f functions/api/inventory.js && echo "✅ api/inventory.js found"
+          test -f functions/api/customers.js && echo "✅ api/customers.js found"
+          test -f functions/api/sales.js && echo "✅ api/sales.js found"
+          test -f functions/api/departments.js && echo "✅ api/departments.js found"
+          test -f functions/api/payments.js && echo "✅ api/payments.js found"
+          test -f netlify.toml && echo "✅ netlify.toml found"
+          echo "All required files verified!"
+
+  # ============================================================
+  # Build Job
+  # ============================================================
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build React application
+        working-directory: frontend
+        run: npm run build
+        env:
+          CI: false
+          REACT_APP_API_URL: /.netlify/functions
+          REACT_APP_APP_NAME: Departmental Store Billing
+          REACT_APP_VERSION: ${{ github.sha }}
+          REACT_APP_ENV: production
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+          retention-days: 1
+
+  # ============================================================
+  # Deploy to Netlify (Production) - Only on push to main
+  # ============================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy to Netlify Production
+        id: deploy
+        run: |
+          DEPLOY_OUTPUT=$(netlify deploy \
+            --prod \
+            --dir=frontend/build \
+            --functions=functions \
+            --message="Deploy from GitHub Actions - ${{ github.sha }}" \
+            --json 2>&1)
+          echo "Deploy output: $DEPLOY_OUTPUT"
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.url // empty')
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Comment deploy URL on PR
+        if: success() && steps.deploy.outputs.url != ''
+        run: |
+          echo "✅ Production deployment successful!"
+          echo "🌐 URL: ${{ steps.deploy.outputs.url }}"
+
+  # ============================================================
+  # Deploy Preview - For Pull Requests
+  # ============================================================
+  deploy-preview:
+    name: Deploy Preview
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Deploy Preview to Netlify
+        id: deploy-preview
+        run: |
+          DEPLOY_OUTPUT=$(netlify deploy \
+            --dir=frontend/build \
+            --functions=functions \
+            --message="Preview: PR #${{ github.event.pull_request.number }} - ${{ github.sha }}" \
+            --json 2>&1)
+          echo "Deploy output: $DEPLOY_OUTPUT"
+          PREVIEW_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url // empty')
+          echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Post preview URL as PR comment
+        if: success() && steps.deploy-preview.outputs.preview_url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Deploy Preview Ready!\n\n**Preview URL:** ${{ steps.deploy-preview.outputs.preview_url }}\n\n- Branch: \`${{ github.head_ref }}\`\n- Commit: \`${{ github.sha }}\``
+            });

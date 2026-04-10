@@ -1,0 +1,55 @@
+{
+  "name": "departmental-store-billing",
+  "version": "1.0.0",
+  "description": "Comprehensive billing and POS system for departmental stores with inventory management, analytics, and advanced features",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:functions\"",
+    "dev:frontend": "cd frontend && npm start",
+    "dev:functions": "netlify dev",
+    "build": "cd frontend && npm run build",
+    "build:functions": "netlify functions:build",
+    "test": "npm run test:frontend",
+    "test:frontend": "cd frontend && npm test -- --watchAll=false --passWithNoTests",
+    "install:all": "npm install && cd frontend && npm install",
+    "db:migrate": "node database/migrate.js",
+    "db:seed": "node database/seed.js",
+    "lint": "cd frontend && npm run lint"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "netlify-cli": "^17.0.0"
+  },
+  "netlify": {
+    "build": {
+      "base": "frontend",
+      "publish": "build",
+      "command": "npm run build",
+      "functions": "../functions"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jijendhar-g/departmental-store-billing.git"
+  },
+  "keywords": [
+    "billing",
+    "pos",
+    "departmental-store",
+    "inventory",
+    "react",
+    "nodejs",
+    "netlify"
+  ],
+  "license": "MIT"
+}
