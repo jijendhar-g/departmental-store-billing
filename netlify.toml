@@ -4,7 +4,7 @@
 [build]
   base = "frontend"
   publish = "build"
-  command = "npm run build"
+  command = ""
   functions = "../functions"
 
 [build.environment]
