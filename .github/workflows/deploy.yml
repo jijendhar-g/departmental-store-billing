@@ -38,7 +38,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Run frontend tests
         working-directory: frontend
@@ -47,7 +47,7 @@ jobs:
           CI: true
 
       - name: Install root dependencies
-        run: npm ci
+        run: npm install
 
       - name: Verify function files
         run: |
@@ -88,7 +88,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Build React application
         working-directory: frontend
