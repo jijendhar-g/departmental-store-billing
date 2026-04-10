@@ -1,0 +1,4 @@
+# Netlify SPA redirect — serve index.html for every route so
+# React Router can handle client-side navigation.
+# This file is copied into the build output by react-scripts.
+/*    /index.html   200
