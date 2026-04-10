@@ -139,12 +139,11 @@ jobs:
       - name: Deploy to Netlify Production
         id: deploy
         run: |
-          DEPLOY_OUTPUT=$(netlify deploy \
-            --prod \
-            --dir=frontend/build \
-            --functions=functions \
-            --message="Deploy from GitHub Actions - ${{ github.sha }}" \
-            --json 2>&1)
+netlify deploy \
+  --prod \
+  --dir=frontend/build \
+  --functions=functions \
+  --message="Deploy from GitHub Actions"
           echo "Deploy output: $DEPLOY_OUTPUT"
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.url // empty')
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
