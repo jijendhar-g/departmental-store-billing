@@ -137,21 +137,16 @@ jobs:
         run: npm install -g netlify-cli
 
       - name: Deploy to Netlify Production
-  run: |
-    netlify deploy \
-      --prod \
-      --dir=frontend/build \
-      --functions=functions \
-      --message="Deploy from GitHub Actions"
-  env:
-    NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-    NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy \--prod \--dir=frontend/build \--functions=functions \--message="Deploy from GitHub Actions"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
       - name: Comment deploy URL on PR
-        if: success() && steps.deploy.outputs.url != ''
+        if: success() 
         run: |
           echo "✅ Production deployment successful!"
-          echo "🌐 URL: ${{ steps.deploy.outputs.url }}"
 
   # ============================================================
   # Deploy Preview - For Pull Requests
