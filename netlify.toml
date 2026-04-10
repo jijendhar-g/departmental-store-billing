@@ -4,7 +4,7 @@
 [build]
   base = "frontend"
   publish = "build"
-  command = ""
+  command = "echo Skipping build"
   functions = "../functions"
 
 [build.environment]
