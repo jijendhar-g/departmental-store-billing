@@ -138,7 +138,7 @@ jobs:
 
       - name: Deploy to Netlify Production
         run: |
-          netlify deploy --prod --dir=frontend/build --functions=functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --message="Deploy from GitHub Actions"
+          netlify deploy --prod --dir=frontend/build --functions=frontend/functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --message="Deploy from GitHub Actions"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
