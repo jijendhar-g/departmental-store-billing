@@ -138,7 +138,7 @@ jobs:
 
       - name: Deploy to Netlify Production
         run: |
-          netlify deploy --prod --dir=frontend/build --functions=frontend/functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --no-build --message="Deploy from GitHub Actions"
+          netlify deploy --prod --dir=frontend/build --functions=functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --no-build --message="Deploy from GitHub Actions"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -183,7 +183,7 @@ jobs:
       - name: Deploy Preview to Netlify
         id: deploy-preview
         run: |
-         netlify deploy --dir=frontend/build --functions=frontend/functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --no-build --message="Preview Deploy"
+          DEPLOY_OUTPUT=$(netlify deploy --dir=frontend/build --functions=functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --no-build --message="Preview Deploy" --json)
           echo "Deploy output: $DEPLOY_OUTPUT"
           PREVIEW_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url // empty')
           echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
