@@ -104,7 +104,7 @@ const getUsers = async (event, requestingUser) => {
 
 const getUserById = async (userId, requestingUser) => {
   // Users can view their own profile; admins/managers can view any user
-  if (requestingUser.userId !== userId) {
+  if (String(requestingUser.userId) !== String(userId)) {
     requireRole(requestingUser, ['admin', 'manager']);
   }
 

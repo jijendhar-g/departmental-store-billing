@@ -183,6 +183,7 @@ jobs:
       - name: Deploy Preview to Netlify
         id: deploy-preview
         run: |
+          set -e
           DEPLOY_OUTPUT=$(netlify deploy --dir=frontend/build --functions=functions --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --no-build --message="Preview Deploy" --json)
           echo "Deploy output: $DEPLOY_OUTPUT"
           PREVIEW_URL=$(echo "$DEPLOY_OUTPUT" | jq -r '.deploy_url // empty')
