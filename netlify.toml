@@ -36,10 +36,6 @@
 [functions]
   directory = "functions"
   node_bundler = "esbuild"
-  included_files = ["functions/**"]
-
-[[plugins]]
-  package = "@netlify/plugin-lighthouse"
 
 # Redirect rules for SPA routing
 [[redirects]]
