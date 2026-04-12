@@ -1,3 +1,1 @@
-// Auth API logic here
-
-module.exports = { /* your code */ };
+module.exports = require('./api/auth');

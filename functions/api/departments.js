@@ -15,7 +15,7 @@ const {
 
 const handler = async (event) => {
   const { httpMethod, path } = event;
-  const pathSegments = path.replace('/.netlify/functions/api/departments', '').split('/').filter(Boolean);
+  const pathSegments = path.replace(/^\/(\.netlify\/functions\/)?(?:api\/)?departments/, '').split('/').filter(Boolean);
   const resourceId = pathSegments[0];
 
   const user = verifyToken(event);
