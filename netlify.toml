@@ -37,40 +37,10 @@
   directory = "functions"
   node_bundler = "esbuild"
 
-# Redirect rules for SPA routing
+# Redirect rules for API routing - maps /api/* to root-level Netlify functions
 [[redirects]]
-  from = "/api/billing/*"
-  to = "/.netlify/functions/api/billing/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/inventory/*"
-  to = "/.netlify/functions/api/inventory/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/customers/*"
-  to = "/.netlify/functions/api/customers/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/sales/*"
-  to = "/.netlify/functions/api/sales/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/auth/*"
-  to = "/.netlify/functions/api/auth/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/departments/*"
-  to = "/.netlify/functions/api/departments/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/payments/*"
-  to = "/.netlify/functions/api/payments/:splat"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
 
 # SPA fallback - all other routes serve the React app

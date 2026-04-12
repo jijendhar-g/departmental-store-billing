@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
       const refreshToken = localStorage.getItem('refreshToken');
       if (refreshToken) {
         try {
-          const response = await axios.post(`${API_BASE_URL}/api/auth/refresh`, { refreshToken });
+          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, { refreshToken });
           const { token } = response.data.data;
           localStorage.setItem('authToken', token);
           originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -67,22 +67,22 @@ apiClient.interceptors.response.use(
 // ============================================================
 export const authAPI = {
   login: (email, password) =>
-    apiClient.post('/api/auth/login', { email, password }),
+    apiClient.post('/auth/login', { email, password }),
 
   logout: () =>
-    apiClient.post('/api/auth/logout'),
+    apiClient.post('/auth/logout'),
 
   refreshToken: (refreshToken) =>
-    apiClient.post('/api/auth/refresh', { refreshToken }),
+    apiClient.post('/auth/refresh', { refreshToken }),
 
   getProfile: () =>
-    apiClient.get('/api/auth/me'),
+    apiClient.get('/auth/me'),
 
   changePassword: (currentPassword, newPassword) =>
-    apiClient.post('/api/auth/change-password', { currentPassword, newPassword }),
+    apiClient.post('/auth/change-password', { currentPassword, newPassword }),
 
   registerUser: (userData) =>
-    apiClient.post('/api/auth/register', userData),
+    apiClient.post('/auth/register', userData),
 };
 
 // ============================================================
@@ -90,22 +90,22 @@ export const authAPI = {
 // ============================================================
 export const billingAPI = {
   getBills: (params = {}) =>
-    apiClient.get('/api/billing', { params }),
+    apiClient.get('/billing', { params }),
 
   getBillById: (billId) =>
-    apiClient.get(`/api/billing/${billId}`),
+    apiClient.get(`/billing/${billId}`),
 
   createBill: (billData) =>
-    apiClient.post('/api/billing', billData),
+    apiClient.post('/billing', billData),
 
   updateBill: (billId, data) =>
-    apiClient.put(`/api/billing/${billId}`, data),
+    apiClient.put(`/billing/${billId}`, data),
 
   voidBill: (billId) =>
-    apiClient.delete(`/api/billing/${billId}`),
+    apiClient.delete(`/billing/${billId}`),
 
   processReturn: (billId, returnData) =>
-    apiClient.post(`/api/billing/${billId}/return`, returnData),
+    apiClient.post(`/billing/${billId}/return`, returnData),
 };
 
 // ============================================================
@@ -113,28 +113,28 @@ export const billingAPI = {
 // ============================================================
 export const inventoryAPI = {
   getProducts: (params = {}) =>
-    apiClient.get('/api/inventory', { params }),
+    apiClient.get('/inventory', { params }),
 
   getProductById: (productId) =>
-    apiClient.get(`/api/inventory/${productId}`),
+    apiClient.get(`/inventory/${productId}`),
 
   searchProducts: (query) =>
-    apiClient.get('/api/inventory/search', { params: { q: query } }),
+    apiClient.get('/inventory/search', { params: { q: query } }),
 
   getLowStockProducts: () =>
-    apiClient.get('/api/inventory/low-stock'),
+    apiClient.get('/inventory/low-stock'),
 
   createProduct: (productData) =>
-    apiClient.post('/api/inventory', productData),
+    apiClient.post('/inventory', productData),
 
   updateProduct: (productId, data) =>
-    apiClient.put(`/api/inventory/${productId}`, data),
+    apiClient.put(`/inventory/${productId}`, data),
 
   adjustStock: (productId, adjustment, reason) =>
-    apiClient.post(`/api/inventory/${productId}/adjust`, { adjustment, reason }),
+    apiClient.post(`/inventory/${productId}/adjust`, { adjustment, reason }),
 
   deleteProduct: (productId) =>
-    apiClient.delete(`/api/inventory/${productId}`),
+    apiClient.delete(`/inventory/${productId}`),
 };
 
 // ============================================================
@@ -142,28 +142,28 @@ export const inventoryAPI = {
 // ============================================================
 export const customersAPI = {
   getCustomers: (params = {}) =>
-    apiClient.get('/api/customers', { params }),
+    apiClient.get('/customers', { params }),
 
   getCustomerById: (customerId) =>
-    apiClient.get(`/api/customers/${customerId}`),
+    apiClient.get(`/customers/${customerId}`),
 
   getCustomerHistory: (customerId, params = {}) =>
-    apiClient.get(`/api/customers/${customerId}/history`, { params }),
+    apiClient.get(`/customers/${customerId}/history`, { params }),
 
   getCustomerLoyalty: (customerId) =>
-    apiClient.get(`/api/customers/${customerId}/loyalty`),
+    apiClient.get(`/customers/${customerId}/loyalty`),
 
   createCustomer: (customerData) =>
-    apiClient.post('/api/customers', customerData),
+    apiClient.post('/customers', customerData),
 
   updateCustomer: (customerId, data) =>
-    apiClient.put(`/api/customers/${customerId}`, data),
+    apiClient.put(`/customers/${customerId}`, data),
 
   redeemLoyaltyPoints: (customerId, points) =>
-    apiClient.put(`/api/customers/${customerId}/loyalty`, { points }),
+    apiClient.put(`/customers/${customerId}/loyalty`, { points }),
 
   deleteCustomer: (customerId) =>
-    apiClient.delete(`/api/customers/${customerId}`),
+    apiClient.delete(`/customers/${customerId}`),
 };
 
 // ============================================================
@@ -171,34 +171,34 @@ export const customersAPI = {
 // ============================================================
 export const salesAPI = {
   getDashboard: (params = {}) =>
-    apiClient.get('/api/sales/dashboard', { params }),
+    apiClient.get('/sales/dashboard', { params }),
 
   getDailyReport: (date) =>
-    apiClient.get('/api/sales/daily', { params: { date } }),
+    apiClient.get('/sales/daily', { params: { date } }),
 
   getWeeklyReport: (weekStart) =>
-    apiClient.get('/api/sales/weekly', { params: { weekStart } }),
+    apiClient.get('/sales/weekly', { params: { weekStart } }),
 
   getMonthlyReport: (year, month) =>
-    apiClient.get('/api/sales/monthly', { params: { year, month } }),
+    apiClient.get('/sales/monthly', { params: { year, month } }),
 
   getDepartmentReport: (params = {}) =>
-    apiClient.get('/api/sales/department', { params }),
+    apiClient.get('/sales/department', { params }),
 
   getProductReport: (params = {}) =>
-    apiClient.get('/api/sales/product', { params }),
+    apiClient.get('/sales/product', { params }),
 
   getCashierReport: (params = {}) =>
-    apiClient.get('/api/sales/cashier', { params }),
+    apiClient.get('/sales/cashier', { params }),
 
   getTaxReport: (params = {}) =>
-    apiClient.get('/api/sales/tax', { params }),
+    apiClient.get('/sales/tax', { params }),
 
   getTopProducts: (params = {}) =>
-    apiClient.get('/api/sales/top-products', { params }),
+    apiClient.get('/sales/top-products', { params }),
 
   getTopCustomers: (params = {}) =>
-    apiClient.get('/api/sales/top-customers', { params }),
+    apiClient.get('/sales/top-customers', { params }),
 };
 
 // ============================================================
@@ -206,19 +206,19 @@ export const salesAPI = {
 // ============================================================
 export const departmentsAPI = {
   getDepartments: (includeStats = false) =>
-    apiClient.get('/api/departments', { params: { includeStats } }),
+    apiClient.get('/departments', { params: { includeStats } }),
 
   getDepartmentById: (departmentId) =>
-    apiClient.get(`/api/departments/${departmentId}`),
+    apiClient.get(`/departments/${departmentId}`),
 
   createDepartment: (data) =>
-    apiClient.post('/api/departments', data),
+    apiClient.post('/departments', data),
 
   updateDepartment: (departmentId, data) =>
-    apiClient.put(`/api/departments/${departmentId}`, data),
+    apiClient.put(`/departments/${departmentId}`, data),
 
   deleteDepartment: (departmentId) =>
-    apiClient.delete(`/api/departments/${departmentId}`),
+    apiClient.delete(`/departments/${departmentId}`),
 };
 
 // ============================================================
@@ -226,22 +226,22 @@ export const departmentsAPI = {
 // ============================================================
 export const paymentsAPI = {
   getPayments: (params = {}) =>
-    apiClient.get('/api/payments', { params }),
+    apiClient.get('/payments', { params }),
 
   getPaymentById: (paymentId) =>
-    apiClient.get(`/api/payments/${paymentId}`),
+    apiClient.get(`/payments/${paymentId}`),
 
   initiatePayment: (billId, method, amount) =>
-    apiClient.post('/api/payments/initiate', { billId, method, amount }),
+    apiClient.post('/payments/initiate', { billId, method, amount }),
 
   verifyPayment: (verificationData) =>
-    apiClient.post('/api/payments/verify', verificationData),
+    apiClient.post('/payments/verify', verificationData),
 
   recordPayment: (paymentData) =>
-    apiClient.post('/api/payments', paymentData),
+    apiClient.post('/payments', paymentData),
 
   processRefund: (paymentId, reason, amount) =>
-    apiClient.post(`/api/payments/${paymentId}/refund`, { reason, amount }),
+    apiClient.post(`/payments/${paymentId}/refund`, { reason, amount }),
 };
 
 export default apiClient;
