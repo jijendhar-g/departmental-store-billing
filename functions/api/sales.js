@@ -14,7 +14,7 @@ const {
 
 const handler = async (event) => {
   const { httpMethod, path } = event;
-  const pathSegments = path.replace('/.netlify/functions/api/sales', '').split('/').filter(Boolean);
+  const pathSegments = path.replace(/^\/(\.netlify\/functions\/)?(?:api\/)?sales/, '').split('/').filter(Boolean);
   const reportType = pathSegments[0];
 
   const user = verifyToken(event);
