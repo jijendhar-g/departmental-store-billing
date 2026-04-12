@@ -15,7 +15,10 @@ const {
 
 const handler = async (event) => {
   const { httpMethod, path } = event;
-  const pathSegments = path.replace('/.netlify/functions/api/auth', '').split('/').filter(Boolean);
+const pathSegments = path
+  .replace(/^\/(\.netlify\/functions\/)?api\/auth/, '')
+  .split('/')
+  .filter(Boolean);
   const action = pathSegments[0];
 
   switch (httpMethod) {
