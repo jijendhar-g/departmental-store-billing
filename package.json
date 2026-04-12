@@ -30,14 +30,6 @@
     "concurrently": "^8.2.2",
     "netlify-cli": "^17.0.0"
   },
-  "netlify": {
-    "build": {
-      "base": "frontend",
-      "publish": "build",
-      "command": "npm run build",
-      "functions": "../functions"
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jijendhar-g/departmental-store-billing.git"
