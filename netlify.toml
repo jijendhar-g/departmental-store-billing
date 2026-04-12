@@ -73,6 +73,11 @@
   to = "/.netlify/functions/api/payments/:splat"
   status = 200
 
+[[redirects]]
+  from = "/api/users/*"
+  to = "/.netlify/functions/api/users/:splat"
+  status = 200
+
 # SPA fallback - all other routes serve the React app
 [[redirects]]
   from = "/*"
