@@ -40,37 +40,42 @@
 # Redirect rules for SPA routing
 [[redirects]]
   from = "/api/billing/*"
-  to = "/.netlify/functions/api/billing/:splat"
+  to = "/.netlify/functions/billing/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/inventory/*"
-  to = "/.netlify/functions/api/inventory/:splat"
+  to = "/.netlify/functions/inventory/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/customers/*"
-  to = "/.netlify/functions/api/customers/:splat"
+  to = "/.netlify/functions/customers/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/sales/*"
-  to = "/.netlify/functions/api/sales/:splat"
+  to = "/.netlify/functions/sales/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/auth/*"
-  to = "/.netlify/functions/api/auth/:splat"
+  to = "/.netlify/functions/auth/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/departments/*"
-  to = "/.netlify/functions/api/departments/:splat"
+  to = "/.netlify/functions/departments/:splat"
   status = 200
 
 [[redirects]]
   from = "/api/payments/*"
-  to = "/.netlify/functions/api/payments/:splat"
+  to = "/.netlify/functions/payments/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/users/*"
+  to = "/.netlify/functions/users/:splat"
   status = 200
 
 # SPA fallback - all other routes serve the React app
