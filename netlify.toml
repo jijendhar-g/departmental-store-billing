@@ -33,8 +33,10 @@
   command = "npm run build"
 
 # Netlify Functions configuration
+# Path is relative to the base directory ("frontend"), so "../functions" points
+# to the repo-root "functions/" directory where the serverless handlers live.
 [functions]
-  directory = "functions"
+  directory = "../functions"
   node_bundler = "esbuild"
 
 # Redirect rules for SPA routing
